@@ -1,4 +1,6 @@
-package com.example.spinningwellness;
+package com.example.iim;
+
+import com.example.iim.R;
 
 import android.os.Bundle;
 import android.app.Activity;
