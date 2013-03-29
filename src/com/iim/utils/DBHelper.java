@@ -23,9 +23,18 @@ public class DBHelper {
 					+ "name text not null"
 					+");";
 
+	private static final String NOTIFICAITON_CREATE =
+			"create table if not exist notification(_id integer primary key autoincrement, "
+					+ "notification_type character(2) not null,"
+					+ "email_id text,"
+					+ "caller_type text not null"
+					+");";
+
 	private static final String DATABASE_NAME = "IIMDB";
 
-	private static final String DATABASE_TABLE = "important_contacts";
+	private static final String DATABASE_TABLE_CONTACTS = "important_contacts";
+
+	private static final String DATABASE_TABLE_NOTIFICATION = "notification";
 
 	private static final int DATABASE_VERSION = 1;
 
@@ -33,13 +42,31 @@ public class DBHelper {
 
 	public DBHelper(Context ctx) {
 		try {
-			System.out.println("Creating databse from dbhelper");
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, DATABASE_VERSION, null);
 			db.execSQL(IMP_CONTACT_CREATE);
+			db.execSQL(NOTIFICAITON_CREATE);
+			createNotificationRecords();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	private void createNotificationRecords() {
+		Cursor c = db.query(DATABASE_TABLE_NOTIFICATION, new String[] {"_id", "notification_type", "email_id","caller_type"}, null, null, null, null, null);
+		if (c.getCount() > 0) {
+			return;
+		}
+		ContentValues initialValues = new ContentValues();
+		initialValues.put("notification_type", "V");
+		initialValues.put("caller_type", "I");
+		db.insert(DATABASE_TABLE_NOTIFICATION, null, initialValues);
+
+		initialValues = new ContentValues();
+		initialValues.put("notification_type", "V");
+		initialValues.put("caller_type", "UI");
+		db.insert(DATABASE_TABLE_NOTIFICATION, null, initialValues);
+	}
+
 
 	public void close() {
 		db.close();
@@ -49,18 +76,18 @@ public class DBHelper {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put("lookup_key", lookup_key);
 		initialValues.put("name", name);
-		db.insert(DATABASE_TABLE, null, initialValues);
+		db.insert(DATABASE_TABLE_CONTACTS, null, initialValues);
 	}
 
 	public void deleteRow(long rowId) {
-		db.delete(DATABASE_TABLE, "_id=" + rowId, null);
+		db.delete(DATABASE_TABLE_CONTACTS, "_id=" + rowId, null);
 	}
 
 	public List<Row> fetchAllRows() {
 		ArrayList<Row> ret = new ArrayList<Row>();
 		try {
-			Cursor c = db.query(DATABASE_TABLE, new String[] {"_id", "lookup_key", "name"}, null, null, null, null, null);
-			int numRows = c.getColumnCount();
+			Cursor c = db.query(DATABASE_TABLE_CONTACTS, new String[] {"_id", "lookup_key", "name"}, null, null, null, null, null);
+			int numRows = c.getCount();
 			c.moveToFirst();
 			for (int i = 0; i < numRows; ++i) {
 				Row row = new Row();
@@ -75,22 +102,5 @@ public class DBHelper {
 		}
 		return ret;
 	}
-
-//	public Row fetchRow(long rowId) {
-//		Row row = new Row();
-//		Cursor c = db.query(true, DATABASE_TABLE, new String[] {
-//						"_id", "lookup_key", "name"}, "_id=" + rowId, null, null,null, null, null);
-//		if (c.getColumnCount() > 0) {
-//			c.moveToFirst();
-//			row._Id = c.getLong(0);
-//			row.lookup_key = c.getString(1);
-//			row.name = c.getString(2);
-//			return row;
-//		} else {
-//			row. = -1;
-//			row.code = row.name= null;
-//		}
-//		return row;
-//	}
 
 }
