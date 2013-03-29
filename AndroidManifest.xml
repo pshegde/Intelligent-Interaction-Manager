@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.iim.ImpCallerActivity"
+            android:label="@string/title_activity_imp_caller" >
+        </activity>
+        <activity
+            android:name="com.example.iim.NotificationTypeActivity"
+            android:label="@string/title_activity_notification_type" >
+        </activity>
     </application>
 
 </manifest>
