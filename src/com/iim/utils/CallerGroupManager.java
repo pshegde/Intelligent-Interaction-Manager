@@ -35,7 +35,7 @@ public class CallerGroupManager {
 	
 	public ArrayList<String> fetchImportantContacts(){
 		
-		// Get group Id of the group we created - Important
+		//Get group Id of the group we created - Important
 		String gidOfImportantGroup = getGroupIdOfImportantGroup();
 	    
 	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
