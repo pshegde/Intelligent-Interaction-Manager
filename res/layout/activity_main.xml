@@ -60,14 +60,7 @@
 		      android:layout_marginTop="22dp"
 		      android:text="Select Notification Type" />
 
-		  <Switch
-		      android:id="@+id/switch1"
-		      android:layout_width="wrap_content"
-		      android:layout_height="wrap_content"
-		      android:layout_below="@+id/btnImportCal"
-		      android:layout_centerHorizontal="true"
-		      android:layout_marginTop="22dp"
-		      android:text="Switch" />
+		
 
  </RelativeLayout>
  </ScrollView>
