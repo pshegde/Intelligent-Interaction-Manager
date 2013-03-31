@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 		// Listening to login button
 		btnImportCal.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-
+				ImportWorkCalendar.readCalendar(getApplicationContext());
 			}
 		});
 
