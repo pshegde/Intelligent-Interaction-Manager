@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
+import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 
 public class MainActivity extends Activity {
@@ -46,9 +47,13 @@ public class MainActivity extends Activity {
 		});
 
 		// Loading the database .... 
-		DBHelper dbhelper = new DBHelper(super.getApplicationContext());
-		System.out.println("data created.");
-		dbhelper.close();
+		//DBHelper dbhelper = new DBHelper(super.getApplicationContext());
+		//System.out.println("data created.");
+		//dbhelper.close();
+		
+		CallerGroupManager callerGroupManager = new CallerGroupManager(super.getApplicationContext());
+		callerGroupManager.createGroup();
+		callerGroupManager.fetchImportantContacts();
 	}
 
 	@Override
