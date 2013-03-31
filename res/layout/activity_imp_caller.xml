@@ -8,9 +8,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ImpCallerActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Footer Start -->
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="110dip"
+        android:layout_alignParentBottom="true"
+        android:background="@layout/footer_repeat" >
+    </LinearLayout>
+    <!-- Footer Ends -->
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_marginBottom="130dp"
+        android:layout_marginTop="20dp"
+        android:cacheColorHint="#00000000" >
+    </ListView>
 
 </RelativeLayout>

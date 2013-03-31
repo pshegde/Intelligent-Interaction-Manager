@@ -1,14 +1,14 @@
 package com.example.iim;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-
-import com.iim.utils.CallerGroupManager;
-import com.iim.utils.DBHelper;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -22,6 +22,12 @@ public class MainActivity extends Activity {
 		// Listening to login button
 		btnImpCallers.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				// Loading the database .... 
+				//DBHelper dbhelper = new DBHelper(super.getApplicationContext());
+				//System.out.println("data created.");
+				//dbhelper.close();
+				
+				
 				Intent i = new Intent(getApplicationContext(), ImpCallerActivity.class);
 				startActivity(i);
 			}
@@ -42,18 +48,12 @@ public class MainActivity extends Activity {
 		// Listening to login button
 		btnImportCal.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				ImportWorkCalendar.readCalendar(getApplicationContext());
+				Toast.makeText(MainActivity.this, "Imported your Work Calendar!", Toast.LENGTH_SHORT).show();
+				//TODO: Work on this
+				//ImportWorkCalendar.readCalendar(getApplicationContext());
 			}
 		});
 
-		// Loading the database .... 
-		//DBHelper dbhelper = new DBHelper(super.getApplicationContext());
-		//System.out.println("data created.");
-		//dbhelper.close();
-		
-		CallerGroupManager callerGroupManager = new CallerGroupManager(super.getApplicationContext());
-		callerGroupManager.createGroup();
-		callerGroupManager.fetchImportantContacts();
 	}
 
 	@Override
