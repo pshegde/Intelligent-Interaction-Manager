@@ -17,7 +17,6 @@ public class ImpCallerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_imp_caller);
 		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
-		callerGroupManager.createGroup();
 		List<String> contacts = callerGroupManager.fetchImportantContacts();
 		contacts.add("ImportantContact");
 		contacts.add("RtoCary");
