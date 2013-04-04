@@ -18,17 +18,6 @@ public class ImpCallerActivity extends Activity {
 		setContentView(R.layout.activity_imp_caller);
 		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
 		List<String> contacts = callerGroupManager.fetchImportantContacts();
-		contacts.add("ImportantContact");
-		contacts.add("RtoCary");
-		contacts.add("RtoGreensboro");
-		contacts.add("RtoLakeRaleigh");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
-		contacts.add("RtoRTP");
 		//create an ArrayAdaptar from the String Array
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.caller_list,contacts);
 		ListView listView = (ListView) findViewById(R.id.listView1);
