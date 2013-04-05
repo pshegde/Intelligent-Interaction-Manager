@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -42,6 +43,17 @@
             android:name="com.example.iim.NotificationNotImpCaller"
             android:label="@string/title_activity_notification_not_imp_caller" >
         </activity>
+
+        <receiver android:name="com.iim.receivers.MissedCallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.iim.services.MissedCallHandlerService"
+            android:label="@string/missed_call_service_name" >
+        </service>
     </application>
 
 </manifest>
