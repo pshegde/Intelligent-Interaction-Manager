@@ -1,196 +1,111 @@
 package com.example.iim;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Calendars;
 import android.text.format.DateUtils;
 
-public class ImportWorkCalendar 
-{
-	static Cursor cursor;
+public class ImportWorkCalendar {
+	//static boolean isBusy ;
+	ContentResolver contentResolver;
+	public  ImportWorkCalendar(Context ctx) {
+		contentResolver = ctx.getContentResolver();
+	}
 
-	public static void readCalendar(Context context) {
-
-		ContentResolver contentResolver = context.getContentResolver();
-
-		// Fetch a list of all calendars synced with the device, their display names and whether the
-
-		cursor = contentResolver.query(Uri.parse("content://com.android.calendar/calendars"),
-				(new String[] { "_id", "displayName", "selected"}), null, null, null);
-
-		HashSet<String> calendarIds = new HashSet<String>();
-
-		try
-		{
-			System.out.println("Count="+cursor.getCount());
-			if(cursor.getCount() > 0)
-			{
-				System.out.println("the control is just inside of the cursor.count loop");
-				while (cursor.moveToNext()) {
-
-					String _id = cursor.getString(0);
-					String displayName = cursor.getString(1);
-					Boolean selected = !cursor.getString(2).equals("0");
-
-					System.out.println("Id: " + _id + " Display Name: " + displayName + " Selected: " + selected);
-					calendarIds.add(_id);
-				}
-			}
-		}
-		catch(AssertionError ex)
-		{
-			ex.printStackTrace();
-		}
-		catch(Exception e)
-		{
+	public boolean getUserStatus() {
+		boolean b = false;
+		try {
+			b = new MyCalendar().execute().get();
+			System.out.println("b is: " + b);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return b;
+	}
 
+	public class MyCalendar extends AsyncTask<Intent, String, Boolean> 
+	{
+		private final String[] COLS = new String[] {CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY};
 
-		// For each calendar, display all the events from the previous week to the end of next week.        
-		for (String id : calendarIds) {
-			Uri.Builder builder = Uri.parse("content://com.android.calendar/instances/when").buildUpon();
-			//Uri.Builder builder = Uri.parse("content://com.android.calendar/calendars").buildUpon();
-			long now = new Date().getTime();
-
-			ContentUris.appendId(builder, now - DateUtils.DAY_IN_MILLIS * 10000);
-			ContentUris.appendId(builder, now + DateUtils.DAY_IN_MILLIS * 10000);
-
-			Cursor eventCursor = contentResolver.query(builder.build(),
-					new String[]  { "title", "begin", "end", "allDay"}, "Calendars._id=" + 1,
-					null, "startDay ASC, startMinute ASC");
-
-			System.out.println("eventCursor count="+eventCursor.getCount());
-			if(eventCursor.getCount()>0)
+		@Override
+		protected Boolean doInBackground(Intent... arg0) {
+			System.out.println("**********in bckgrd");
+			Cursor cursor = null;
+			try
 			{
+				Calendar c = Calendar.getInstance();
+				//c.set(2013,03,04,16,00);
+				Date now = c.getTime();
+				
+				Date freeTime = null;
+				//"("+CalendarContract.Events.DTSTART+"<="+now.getTimeInMillis()+" and " +CalendarContract.Events.DTEND+">"+now.getTimeInMillis()+")"
+				cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, COLS, null, null, null);
+				//endTimeAllDay.getTimeInMillis()+"))", null, null);
 
-				eventCursor.moveToFirst();
-
-				while (eventCursor.moveToNext())
+				boolean isBusy = false;
+				while(cursor.moveToNext()) 
 				{
-					Object mbeg_date,beg_date,beg_time,end_date,end_time;  
-
-					final String title = eventCursor.getString(0);
-					final Date begin = new Date(eventCursor.getLong(1));
-					final Date end = new Date(eventCursor.getLong(2));
-					final Boolean allDay = !eventCursor.getString(3).equals("0");
-
-					/*  System.out.println("Title: " + title + " Begin: " + begin + " End: " + end +
-                    " All Day: " + allDay);
-					 */  
-					System.out.println("Title:"+title);
-					System.out.println("Begin:"+begin);
-					System.out.println("End:"+end);
-					System.out.println("All Day:"+allDay);
-
-					/* the calendar control metting-begin events Respose  sub-string (starts....hare) */    
-
-					Pattern p = Pattern.compile(" ");
-					String[] items = p.split(begin.toString());
-					String scalendar_metting_beginday,scalendar_metting_beginmonth,scalendar_metting_beginyear,scalendar_metting_begindate,scalendar_metting_begintime,scalendar_metting_begingmt;
-
-					scalendar_metting_beginday = items[0];
-					scalendar_metting_beginmonth = items[1];
-					scalendar_metting_begindate = items[2];
-					scalendar_metting_begintime = items[3];
-					scalendar_metting_begingmt = items[4];
-					scalendar_metting_beginyear = items[5];
-
-
-					String  calendar_metting_beginday = scalendar_metting_beginday;
-					String  calendar_metting_beginmonth = scalendar_metting_beginmonth.toString().trim();
-
-					int  calendar_metting_begindate = Integer.parseInt(scalendar_metting_begindate.trim());
-
-					String calendar_metting_begintime = scalendar_metting_begintime.toString().trim();
-					String calendar_metting_begingmt = scalendar_metting_begingmt;
-					int calendar_metting_beginyear = Integer.parseInt(scalendar_metting_beginyear.trim());
-
-
-					System.out.println("calendar_metting_beginday="+calendar_metting_beginday);
-
-					System.out.println("calendar_metting_beginmonth ="+calendar_metting_beginmonth);
-
-					System.out.println("calendar_metting_begindate ="+calendar_metting_begindate);
-
-					System.out.println("calendar_metting_begintime="+calendar_metting_begintime);
-
-					System.out.println("calendar_metting_begingmt ="+calendar_metting_begingmt);
-
-					System.out.println("calendar_metting_beginyear ="+calendar_metting_beginyear);
-
-					/* the calendar control metting-begin events Respose  sub-string (starts....ends) */  
-
-					/* the calendar control metting-end events Respose  sub-string (starts....hare) */  
-
-					Pattern p1 = Pattern.compile(" ");
-					String[] enditems = p.split(end.toString());
-					String scalendar_metting_endday,scalendar_metting_endmonth,scalendar_metting_endyear,scalendar_metting_enddate,scalendar_metting_endtime,scalendar_metting_endgmt;
-
-					scalendar_metting_endday = enditems[0];
-					scalendar_metting_endmonth = enditems[1];
-					scalendar_metting_enddate = enditems[2];
-					scalendar_metting_endtime = enditems[3];
-					scalendar_metting_endgmt = enditems[4];
-					scalendar_metting_endyear = enditems[5];
-
-
-					String  calendar_metting_endday = scalendar_metting_endday;
-					String  calendar_metting_endmonth = scalendar_metting_endmonth.toString().trim();
-
-					int  calendar_metting_enddate = Integer.parseInt(scalendar_metting_enddate.trim());
-
-					String calendar_metting_endtime = scalendar_metting_endtime.toString().trim();
-					String calendar_metting_endgmt = scalendar_metting_endgmt;
-					int calendar_metting_endyear = Integer.parseInt(scalendar_metting_endyear.trim());
-
-
-					System.out.println("calendar_metting_beginday="+calendar_metting_endday);
-
-					System.out.println("calendar_metting_beginmonth ="+calendar_metting_endmonth);
-
-					System.out.println("calendar_metting_begindate ="+calendar_metting_enddate);
-
-					System.out.println("calendar_metting_begintime="+calendar_metting_endtime);
-
-					System.out.println("calendar_metting_begingmt ="+calendar_metting_endgmt);
-
-					System.out.println("calendar_metting_beginyear ="+calendar_metting_endyear);
-
-					/* the calendar control metting-end events Respose  sub-string (starts....ends) */    
-
-					System.out.println("only date begin of events="+begin.getDate());
-					System.out.println("only begin time of events="+begin.getHours() + ":" +begin.getMinutes() + ":" +begin.getSeconds());
-
-					System.out.println("only date begin of events="+end.getDate());
-					System.out.println("only begin time of events="+end.getHours() + ":" +end.getMinutes() + ":" +end.getSeconds());
-
-					beg_date = begin.getDate();
-					mbeg_date = begin.getDate()+"/"+calendar_metting_beginmonth+"/"+calendar_metting_beginyear;
-					beg_time = begin.getHours();
-
-					System.out.println("the vaule of mbeg_date="+mbeg_date.toString().trim());
-					end_date = end.getDate();
-					end_time = end.getHours();
-
-
-//					CallHandlerUI.metting_begin_date.add(beg_date.toString());
-//					CallHandlerUI.metting_begin_mdate.add(mbeg_date.toString());
-//
-//					CallHandlerUI.metting_begin_mtime.add(calendar_metting_begintime.toString());
-//
-//					CallHandlerUI.metting_end_date.add(end_date.toString());
-//					CallHandlerUI.metting_end_time.add(end_time.toString());
-//					CallHandlerUI.metting_end_mtime.add(calendar_metting_endtime.toString());
-
+					final String title = cursor.getString(0);
+					final Date begin = new Date(cursor.getLong(1));
+					final Date end = new Date(cursor.getLong(2));
+					final Boolean allDay = !cursor.getString(3).equals("0");
+					System.out.println("title:" + title);
+					System.out.println("begin:" + begin);
+					System.out.println("end:" + end);
+					System.out.println("allDay:" + allDay);
+					if((begin.getTime() <= now.getTime()) && (end.getTime() > now.getTime())){
+						
+						System.out.println("BUSY**********");
+						isBusy = true;
+						now = end;
+						freeTime = end;
+					} 
+					
 				}
+
+				if(isBusy){
+					///send to database
+					System.out.println("BUSY");
+					Calendar c1 = Calendar.getInstance();
+					c1.setTime(freeTime);
+					System.out.println(c1);
+				} else{
+					System.out.println("NOT BUSY");
+				}
+				return isBusy;
+
+				
 			}
-			break;
+			catch(Exception e)
+			{
+				System.out.println("DEBUG"+ ""+e);
+				return null;
+			}
 		}
-	}}
+
+		@Override
+		protected void onPostExecute(Boolean result) 
+		{
+			System.out.println("**********in post");
+			super.onPostExecute(result);
+		}
+	}
+}
