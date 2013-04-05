@@ -2,6 +2,7 @@ package com.iim.services;
 
 import java.util.ArrayList;
 
+import com.example.iim.ImportWorkCalendar;
 import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
@@ -53,22 +54,32 @@ public class MissedCallHandlerService extends Service {
 		int indexName = contactLookup
 				.getColumnIndex(ContactsContract.Data.DISPLAY_NAME);
 
+		String name = null;
 		try {
 			if (contactLookup != null && contactLookup.moveToNext()) {
-				String name = contactLookup.getString(indexName);
+				name = contactLookup.getString(indexName);
 				System.out.println(name);
+			}
+			else{
+				name = null;
+			}
+			CallerGroupManager callerGroupManager = new CallerGroupManager(
+					getApplicationContext());
+			ArrayList<String> importantContacts = callerGroupManager
+					.fetchImportantContacts();
+			if (importantContacts.contains(name)) {
+				// Fetch notification type for Important Caller
 				this.sendEmailNotification(name, incomingNumber);
-				CallerGroupManager callerGroupManager = new CallerGroupManager(
-						getApplicationContext());
-				ArrayList<String> importantContacts = callerGroupManager
-						.fetchImportantContacts();
-				if (importantContacts.contains(name)) {
-					// Fetch notification type for Important Caller
-
-				} else {
-					// Fetch notification type for unImportant Caller
+			} else {
+				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
+				boolean isBusy = importWorkCalendar.getUserStatus();
+				if(!isBusy){
+					// Fetch notification type for unImportant Caller	
+					this.sendEmailNotification(name, incomingNumber);
 				}
-
+				else{
+					System.out.println("He is busy");
+				}
 			}
 		} finally {
 			if (contactLookup != null) {
@@ -78,8 +89,11 @@ public class MissedCallHandlerService extends Service {
 	}
 
 	public void sendEmailNotification(String incomingName, String incomingNumber) {
-        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "pshegde@ncsu.edu", incomingNumber, incomingName);
+        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", incomingNumber, incomingName);
         sendEmailTask.execute();
 	}
 
+	public void sendNotification(){
+		
+	}
 }
