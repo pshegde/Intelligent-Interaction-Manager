@@ -3,11 +3,6 @@ package com.iim.services;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.example.iim.ImportWorkCalendar;
-import com.iim.utils.CallerGroupManager;
-import com.iim.utils.DBHelper;
-import com.iim.utils.MissedCallListener;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -20,7 +15,12 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+
+import com.example.iim.ImportWorkCalendar;
+import com.iim.utils.CallerGroupManager;
+import com.iim.utils.DBHelper;
+import com.iim.utils.MissedCallListener;
+import com.iim.utils.MissedCallRow;
 
 public class MissedCallHandlerService extends Service {
 
@@ -107,12 +107,30 @@ public class MissedCallHandlerService extends Service {
 		//GET from from missed call table free time in calendar for the 0 - if_notify=0 contacts and set the alarm....
 		//select free_time from missed_call where if_notified="0"; 
 		//set free time in calendar
+		
 		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(System.currentTimeMillis()); // free_time
-		calendar.add(Calendar.SECOND, 10);
-		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+		
+		DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
+		ArrayList<MissedCallRow> missedCallRow = (ArrayList<MissedCallRow>) dbHelper.fetchAllMissedCallRows();
+
+		for (MissedCallRow currentRow : missedCallRow) {
+			if (currentRow.getIs_notified().equals("0")) {
+				// update the row to set it to 1
+				dbHelper.updateMissedCallRow(currentRow.get_Id(), currentRow.getCaller_name(), currentRow.getCaller_no(), currentRow.getCallee_free_time(), "1");
+				 // free_time TODO - Confirm with prajakta
+				calendar.setTimeInMillis(System.currentTimeMillis());
+				calendar.add(Calendar.SECOND, (int) currentRow.getCallee_free_time());
+				alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+				
+				/* 
+				 * OR
+				 * alarmManager.set(AlarmManager.RTC_WAKEUP, currentRow.getCaller_free_time(), pendingIntent);
+				 * 
+				 */
+			}
+		}
 	}
 }
