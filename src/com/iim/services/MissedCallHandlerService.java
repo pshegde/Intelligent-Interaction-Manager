@@ -104,14 +104,14 @@ public class MissedCallHandlerService extends Service {
 	
 	public void startAlarm(){
 		System.out.println("**Start an alarm..");
-		//GET from from missed call table free time in calendar for the 0 contacts and set the alarm....
+		//GET from from missed call table free time in calendar for the 0 - if_notify=0 contacts and set the alarm....
 		//select free_time from missed_call where if_notified="0"; 
 		//set free time in calendar
 		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.setTimeInMillis(System.currentTimeMillis()); // free_time
 		calendar.add(Calendar.SECOND, 10);
 		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 	}

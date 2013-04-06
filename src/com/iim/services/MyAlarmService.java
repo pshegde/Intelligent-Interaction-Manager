@@ -21,14 +21,10 @@ public class MyAlarmService extends Service {
 	public void onCreate() {
 		//send notification here to user
 		System.out.println("Created an alarm...");
-		//GET from from missed call table the 0 contacts and send the email 
+		//GET from from missed call table the 1 contacts and send the email 
 		//get the number and name from the table and send in the email
-		//select * from missed_call where if_notified="0"; 
-		//make if_notified for these "1"
-		//compile all in 1 email and send to the callee using the sendnotification method in the missedcallhandler
-		
-		
+		//select * from missed_call where if_notified="1"; 
+		//make if_notified for these "2"
+		//compile all in 1 email and send to the callee using the sendnotification method in the missedcallhandler	
 	}
-
-
 }

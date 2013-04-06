@@ -47,8 +47,10 @@ public class DBHelper {
 	private static final int DATABASE_VERSION = 1;
 
 	private SQLiteDatabase db;
+	
+	private static DBHelper dbHelper = null;
 
-	public DBHelper(Context ctx) {
+	private DBHelper(Context ctx) {
 		try {
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, DATABASE_VERSION, null);
 			db.execSQL(IMP_CONTACT_CREATE);
@@ -58,6 +60,13 @@ public class DBHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static DBHelper getInstance(Context ctx) {
+		if (dbHelper == null) {
+			dbHelper = new DBHelper(ctx);
+		}
+		return dbHelper;
 	}
 	
 	private void createNotificationRecords() {

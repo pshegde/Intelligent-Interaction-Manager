@@ -88,7 +88,7 @@ public class ImportWorkCalendar {
 
 				if(isBusy){
 					///send to database
-					DBHelper helper = new DBHelper(context);
+					DBHelper helper = DBHelper.getInstance(context);
 					helper.createMissedCallRow(namenumber[0],namenumber[1],freeTime.getTime(),"0");
 					System.out.println("BUSY");
 					Calendar c1 = Calendar.getInstance();
