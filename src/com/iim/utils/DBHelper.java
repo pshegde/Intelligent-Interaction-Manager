@@ -13,7 +13,7 @@ import android.util.Log;
 public class DBHelper {
 
 	private static final String MISSED_CALL_CREATE =
-			"create table if not exist missed_call(_id integer primary key autoincrement, "
+			"create table if not exists missed_call(_id integer primary key autoincrement, "
 					+ "caller_name text not null,"
 					+ "caller_no text not null,"
 					+ "callee_free_time long,"
@@ -71,7 +71,7 @@ public class DBHelper {
 	public List<MissedCallRow> fetchAllMissedCallRows() {
 		ArrayList<MissedCallRow> missedCallRow = new ArrayList<MissedCallRow>();
 		try {
-			Cursor c = db.query(TABLE_MISSED_CALL, new String[] {"_id", "caller_name", "caller_no","caller_free_time","is_notified"}, null, null, null, null, null);
+			Cursor c = db.query(TABLE_MISSED_CALL, new String[] {"_id", "caller_name", "caller_no","callee_free_time","is_notified"}, null, null, null, null, null);
 			int numRows = c.getCount();
 			c.moveToFirst();
 			for (int i = 0; i < numRows; ++i) {
