@@ -43,4 +43,16 @@ public class CallerGroupManager {
 	    return importantContacts;
 	}
 	
+	public String getGoogleAccount(){
+	    AccountManager manager = AccountManager.get(this.context); 
+	    Account[] accounts = manager.getAccountsByType("com.google"); 
+	    List<String> possibleEmails = new LinkedList<String>();
+
+	    for (Account account : accounts) {
+	      System.out.println(account.name);
+	      return account.name;
+	    }
+	    return null;
+	}
+	
 }
