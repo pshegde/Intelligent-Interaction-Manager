@@ -37,7 +37,10 @@ public class MainActivity extends Activity {
 			});
 			alertDialog.show();
 		}
-		
+		else{
+			TextView text = (TextView) findViewById(R.id.textView2);
+	        text.setText("Google account is: " + googleAccount);
+		}
 		
 		// Listening to login button
 		btnImpCallers.setOnClickListener(new View.OnClickListener() {

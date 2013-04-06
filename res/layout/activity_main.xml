@@ -59,14 +59,14 @@
           android:text="View My Important Callers" />
 
       <TextView
+          android:id="@+id/textView2"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:layout_alignParentLeft="true"
           android:layout_below="@+id/textView1"
           android:layout_marginTop="26dp"
-          android:text="Google account is: pshegde@ncsu.edu"
           android:textColor="#5C3317"
-          android:textSize="20dp"
+          android:textSize="16dp"
           android:textStyle="bold" />
   </RelativeLayout>
 
