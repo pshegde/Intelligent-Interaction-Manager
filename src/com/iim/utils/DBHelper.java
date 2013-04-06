@@ -71,7 +71,7 @@ public class DBHelper {
 	public List<MissedCallRow> fetchAllMissedCallRows() {
 		ArrayList<MissedCallRow> missedCallRow = new ArrayList<MissedCallRow>();
 		try {
-			Cursor c = db.query(MISSED_CALL_CREATE, new String[] {"_id", "caller_name", "caller_no","caller_free_time","is_notified"}, null, null, null, null, null);
+			Cursor c = db.query(TABLE_MISSED_CALL, new String[] {"_id", "caller_name", "caller_no","caller_free_time","is_notified"}, null, null, null, null, null);
 			int numRows = c.getCount();
 			c.moveToFirst();
 			for (int i = 0; i < numRows; ++i) {
