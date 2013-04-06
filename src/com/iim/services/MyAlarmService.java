@@ -1,7 +1,13 @@
 package com.iim.services;
 
-import com.iim.utils.MissedCallListener;
+import java.util.ArrayList;
+import java.util.Calendar;
 
+import com.iim.utils.DBHelper;
+import com.iim.utils.MissedCallListener;
+import com.iim.utils.MissedCallRow;
+
+import android.app.AlarmManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +22,7 @@ public class MyAlarmService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void onCreate() {
 		//send notification here to user
@@ -26,5 +32,16 @@ public class MyAlarmService extends Service {
 		//select * from missed_call where if_notified="1"; 
 		//make if_notified for these "2"
 		//compile all in 1 email and send to the callee using the sendnotification method in the missedcallhandler	
+
+		DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
+		ArrayList<MissedCallRow> missedCallRow = (ArrayList<MissedCallRow>) dbHelper.fetchAllMissedCallRows();
+
+		for (MissedCallRow currentRow : missedCallRow) {
+			if (currentRow.getIs_notified().equals("1")) {
+				// update the row to set it to 1
+				dbHelper.updateMissedCallRow(currentRow.get_Id(), currentRow.getCaller_name(), currentRow.getCaller_no(), currentRow.getCallee_free_time(), "2");
+
+			}
+		}
 	}
 }

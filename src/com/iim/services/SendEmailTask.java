@@ -1,5 +1,8 @@
 package com.iim.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -15,6 +18,8 @@ public class SendEmailTask extends AsyncTask<Void, Void, Void> {
 	String recipient;
 	String incomingNumber;
 	String incomingName;
+	
+	Map<String, String> missedCalls = new HashMap<String,String>();
 	
 	void setIntent(Intent intent){
 		i=intent;
