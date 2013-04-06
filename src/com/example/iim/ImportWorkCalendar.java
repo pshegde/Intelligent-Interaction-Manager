@@ -31,10 +31,10 @@ public class ImportWorkCalendar {
 		context = ctx;
 	}
 
-	public boolean getUserStatus(String number) {
+	public boolean getUserStatus(String name,String number) {
 		boolean b = false;
 		try {
-			b = new MyCalendar().execute(new String[]{number}).get();
+			b = new MyCalendar().execute(new String[]{name,number}).get();
 			System.out.println("b is: " + b);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -52,7 +52,7 @@ public class ImportWorkCalendar {
 		private final String[] COLS = new String[] {CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY};
 
 		@Override
-		protected Boolean doInBackground(String... number) {
+		protected Boolean doInBackground(String... namenumber) {
 			System.out.println("**********in bckgrd");
 			Cursor cursor = null;
 			try
@@ -89,7 +89,7 @@ public class ImportWorkCalendar {
 				if(isBusy){
 					///send to database
 					DBHelper helper = new DBHelper(context);
-					helper.createMissedCallRow(number[0],freeTime.getTime(),"0");
+					helper.createMissedCallRow(namenumber[0],namenumber[1],freeTime.getTime(),"0");
 					System.out.println("BUSY");
 					Calendar c1 = Calendar.getInstance();
 					c1.setTime(freeTime);

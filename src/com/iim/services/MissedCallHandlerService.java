@@ -75,7 +75,7 @@ public class MissedCallHandlerService extends Service {
 				this.sendEmailNotification(name, incomingNumber);
 			} else {
 				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
-				boolean isBusy = importWorkCalendar.getUserStatus(incomingNumber);
+				boolean isBusy = importWorkCalendar.getUserStatus(name, incomingNumber);
 				if(!isBusy){
 					// Fetch notification type for unImportant Caller	
 					this.sendEmailNotification(name, incomingNumber);
@@ -104,6 +104,9 @@ public class MissedCallHandlerService extends Service {
 	
 	public void startAlarm(){
 		System.out.println("**Start an alarm..");
+		//GET from from missed call table free time in calendar for the 0 contacts and set the alarm....
+		//select free_time from missed_call where if_notified="0"; 
+		//set free time in calendar
 		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);

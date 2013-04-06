@@ -16,7 +16,7 @@ public class DBHelper {
 		public String lookup_key;
 		public String name;
 	}
-
+	
 	private static final String IMP_CONTACT_CREATE =
 			"create table if not exist important_contacts(_id integer primary key autoincrement, "
 					+ "lookup_key text not null,"
@@ -32,8 +32,9 @@ public class DBHelper {
 	
 	private static final String MISSED_CALL_CREATE =
 			"create table if not exist missed_call(_id integer primary key autoincrement, "
-					+ "call_no text not null,"
-					+ "free_time long,"
+					+ "caller_name text not null,"
+					+ "caller_no text not null,"
+					+ "callee_free_time long,"
 					+ "is_notified character(1)"
 					+");";
 
@@ -58,7 +59,7 @@ public class DBHelper {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void createNotificationRecords() {
 		Cursor c = db.query(DATABASE_TABLE_NOTIFICATION, new String[] {"_id", "notification_type", "email_id","caller_type"}, null, null, null, null, null);
 		if (c.getCount() > 0) {
@@ -87,10 +88,11 @@ public class DBHelper {
 		db.insert(DATABASE_TABLE_CONTACTS, null, initialValues);
 	}
 
-	public void createMissedCallRow(String name, long free_time, String is_notified) {
+	public void createMissedCallRow(String name,String number, long free_time, String is_notified) {
 		ContentValues initialValues = new ContentValues();
-		initialValues.put("call_no", name);
-		initialValues.put("free_time", free_time);
+		initialValues.put("caller_name", name);
+		initialValues.put("caller_no", number);
+		initialValues.put("callee_free_time", free_time);
 		initialValues.put("is_notified", is_notified);
 		db.insert(MISSED_CALL_CREATE, null, initialValues);
 	}
