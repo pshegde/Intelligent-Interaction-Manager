@@ -28,6 +28,9 @@ public class SendEmailTask extends AsyncTask<Void, Void, Void> {
 		this.password = password;
 		this.hostname = hostname;
 		this.recipient = recipient;
+
+		// clean missed calls map
+		this.missedCalls.clear();
 		
 		for(String key: missed.keySet()) {
 			  if(!this.missedCalls.containsKey(key)) {

@@ -2,6 +2,8 @@ package com.iim.services;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
@@ -36,12 +38,15 @@ public class MyAlarmService extends Service {
 		DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
 		ArrayList<MissedCallRow> missedCallRow = (ArrayList<MissedCallRow>) dbHelper.fetchAllMissedCallRows();
 
+		Map<String,String> missedCalls = new HashMap<String,String>();
 		for (MissedCallRow currentRow : missedCallRow) {
 			if (currentRow.getIs_notified().equals("1")) {
 				// update the row to set it to 1
 				dbHelper.updateMissedCallRow(currentRow.get_Id(), currentRow.getCaller_name(), currentRow.getCaller_no(), currentRow.getCallee_free_time(), "2");
-
+				missedCalls.put(currentRow.getCaller_name(),currentRow.getCaller_no());
 			}
 		}
+		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", missedCalls);
+		sendEmailTask.execute();
 	}
 }

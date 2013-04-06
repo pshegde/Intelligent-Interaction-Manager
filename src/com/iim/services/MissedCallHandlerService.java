@@ -127,15 +127,7 @@ public class MissedCallHandlerService extends Service {
 				// update the row to set it to 1
 				dbHelper.updateMissedCallRow(currentRow.get_Id(), currentRow.getCaller_name(), currentRow.getCaller_no(), currentRow.getCallee_free_time(), "1");
 				 // free_time TODO - Confirm with prajakta
-				calendar.setTimeInMillis(System.currentTimeMillis());
-				calendar.add(Calendar.SECOND, (int) currentRow.getCallee_free_time());
-				alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-				
-				/* 
-				 * OR
-				 * alarmManager.set(AlarmManager.RTC_WAKEUP, currentRow.getCaller_free_time(), pendingIntent);
-				 * 
-				 */
+				 alarmManager.set(AlarmManager.RTC_WAKEUP, currentRow.getCallee_free_time(), pendingIntent);
 			}
 		}
 	}
