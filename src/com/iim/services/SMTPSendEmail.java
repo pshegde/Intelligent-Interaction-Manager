@@ -54,13 +54,20 @@ public class SMTPSendEmail extends Authenticator{
 		emailMessage.setFrom(new InternetAddress(mUserName));
 		emailMessage.setRecipient(RecipientType.TO, new InternetAddress(recipient));  
 
-		emailMessage.setSubject("You've got a missed call");    
-		if(incomingName==null){
-			msgBody.setText("You've got a missed call from " + incomingNumber);
+		emailMessage.setSubject("You've got a missed call");   
+		
+		String message = "";
+		for(String incomingName:missedCalls.keySet()){
+			if(incomingName==null){
+				message = message + "\nYou've got a missed call from " + missedCalls.get(incomingName);
+			}
+			else{
+				message = message + "\nYou've got a missed call from " + incomingName + "(" + missedCalls.get(incomingName) +")" ;
+			}
 		}
-		else{
-			msgBody.setText("You've got a missed call from " + incomingName);
-		}
+		
+		emailMessage.setText(message);
+		
 		bodyMultipart.addBodyPart(msgBody);
 
 		emailMessage.setContent(bodyMultipart);
