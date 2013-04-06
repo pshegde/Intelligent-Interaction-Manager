@@ -26,6 +26,7 @@ import com.iim.utils.MissedCallRow;
 
 public class MissedCallHandlerService extends Service {
 
+	public static String GOOGLE_EMAIL = "";
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// TODO do something useful
@@ -100,7 +101,9 @@ public class MissedCallHandlerService extends Service {
 	}
 
 	public void sendEmailNotification(Map<String,String> missed) {
-        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", missed);
+		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
+		String googleAccount = callerGroupManager.getGoogleAccount();
+        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missed);
         sendEmailTask.execute();
 	}
 
@@ -117,7 +120,6 @@ public class MissedCallHandlerService extends Service {
 		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
 		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		Calendar calendar = Calendar.getInstance();
 		
 		DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
 		ArrayList<MissedCallRow> missedCallRow = (ArrayList<MissedCallRow>) dbHelper.fetchAllMissedCallRows();

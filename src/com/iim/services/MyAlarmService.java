@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
 import com.iim.utils.MissedCallRow;
@@ -46,7 +47,9 @@ public class MyAlarmService extends Service {
 				missedCalls.put(currentRow.getCaller_name(),currentRow.getCaller_no());
 			}
 		}
-		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", missedCalls);
+		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
+		String googleAccount = callerGroupManager.getGoogleAccount();
+		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missedCalls);
 		sendEmailTask.execute();
 	}
 }

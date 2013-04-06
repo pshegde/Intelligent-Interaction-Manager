@@ -49,8 +49,10 @@ public class ImportWorkCalendar {
 
 	public class MyCalendar extends AsyncTask<String, String, Boolean> 
 	{
-		private final String[] COLS = new String[] {CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY};
+		private final String[] COLS = new String[] {CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY,CalendarContract.Events.RRULE,CalendarContract.Events.RDATE};
 
+		private final String[] COLS_2 = new String[] {CalendarContract.Instances.BEGIN, CalendarContract.Instances.END};//, CalendarContract.Events.ALL_DAY,CalendarContract.Events.RRULE,CalendarContract.Events.RDATE};
+		
 		@Override
 		protected Boolean doInBackground(String... namenumber) {
 			System.out.println("**********in bckgrd");
@@ -62,21 +64,21 @@ public class ImportWorkCalendar {
 				Date now = c.getTime();
 				
 				Date freeTime = null;
-				//"("+CalendarContract.Events.DTSTART+"<="+now.getTimeInMillis()+" and " +CalendarContract.Events.DTEND+">"+now.getTimeInMillis()+")"
-				cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, COLS, null, null, null);
-				//endTimeAllDay.getTimeInMillis()+"))", null, null);
-
+				Calendar cal = Calendar.getInstance();
+				Date now1 = cal.getTime();
+				long begin_param = now1.getTime();
+				cal.add(Calendar.DATE, 1);
+				now1 = cal.getTime();
+				long end_param = now1.getTime();
+				cursor =  CalendarContract.Instances.query(contentResolver, COLS_2,begin_param,end_param);
+				
 				boolean isBusy = false;
 				while(cursor.moveToNext()) 
 				{
-					final String title = cursor.getString(0);
-					final Date begin = new Date(cursor.getLong(1));
-					final Date end = new Date(cursor.getLong(2));
-					final Boolean allDay = !cursor.getString(3).equals("0");
-					System.out.println("title:" + title);
+					Date begin = new Date(cursor.getLong(0));
+					Date end = new Date(cursor.getLong(1));
 					System.out.println("begin:" + begin);
 					System.out.println("end:" + end);
-					System.out.println("allDay:" + allDay);
 					if((begin.getTime() <= now.getTime()) && (end.getTime() > now.getTime())){
 						System.out.println("BUSY**********");
 						isBusy = true;
@@ -88,6 +90,7 @@ public class ImportWorkCalendar {
 
 				if(isBusy){
 					///send to database
+					System.out.println("Free time: " + freeTime.getDate() + " " + freeTime.getHours() +" "+ freeTime.getMinutes());
 					DBHelper helper = DBHelper.getInstance(context);
 					helper.createMissedCallRow(namenumber[0],namenumber[1],freeTime.getTime(),"0");
 					System.out.println("BUSY");

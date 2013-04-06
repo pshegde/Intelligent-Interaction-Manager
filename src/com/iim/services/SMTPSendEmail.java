@@ -62,11 +62,11 @@ public class SMTPSendEmail extends Authenticator{
 				message = message + "\nYou've got a missed call from " + missedCalls.get(incomingName);
 			}
 			else{
-				message = message + "\nYou've got a missed call from " + incomingName + "(" + missedCalls.get(incomingName) +")" ;
+				message = message + "\nYou've got a missed call from " + incomingName + " (" + missedCalls.get(incomingName) +")" ;
 			}
 		}
 		
-		emailMessage.setText(message);
+		msgBody.setText(message);
 		
 		bodyMultipart.addBodyPart(msgBody);
 

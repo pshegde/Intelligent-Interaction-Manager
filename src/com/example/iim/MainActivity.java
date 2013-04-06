@@ -2,6 +2,7 @@ package com.example.iim;
 
 import java.util.List;
 
+import com.iim.services.MissedCallHandlerService;
 import com.iim.utils.CallerGroupManager;
 
 import android.app.Activity;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity {
 		else{
 			TextView text = (TextView) findViewById(R.id.textView2);
 	        text.setText("Google account is: " + googleAccount);
+	        MissedCallHandlerService.GOOGLE_EMAIL = googleAccount;
 		}
 		
 		// Listening to login button
