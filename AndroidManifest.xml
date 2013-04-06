@@ -35,19 +35,6 @@
             android:name="com.example.iim.ImpCallerActivity"
             android:label="@string/title_activity_imp_caller" >
         </activity>
-        <activity
-            android:name="com.example.iim.NotificationTypeActivity"
-            android:label="@string/title_activity_notification_type" >
-        </activity>
-        <activity
-            android:name="com.example.iim.NotificationImpCaller"
-            android:label="@string/title_activity_notification_imp_caller" >
-        </activity>
-        <activity
-            android:name="com.example.iim.NotificationNotImpCaller"
-            android:label="@string/title_activity_notification_not_imp_caller" >
-        </activity>
-
         <receiver android:name="com.iim.receivers.MissedCallReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />

@@ -33,27 +33,6 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		Button btnNotType  = (Button) findViewById(R.id.btnNotType);
-
-		// Listening to login button
-		btnNotType.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				Intent i = new Intent(getApplicationContext(), NotificationTypeActivity.class);
-				startActivity(i);
-			}
-		});
-
-		Button btnImportCal  = (Button) findViewById(R.id.btnImportCal);
-
-		// Listening to login button
-		btnImportCal.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				Toast.makeText(MainActivity.this, "Imported your Work Calendar!", Toast.LENGTH_SHORT).show();
-				//TODO: Work on this
-				//ImportWorkCalendar.readCalendar(getApplicationContext());
-			}
-		});
-
 	}
 
 	@Override
