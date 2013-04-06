@@ -7,6 +7,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import com.iim.utils.DBHelper;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -21,14 +25,16 @@ import android.text.format.DateUtils;
 public class ImportWorkCalendar {
 	//static boolean isBusy ;
 	ContentResolver contentResolver;
+	Context context;
 	public  ImportWorkCalendar(Context ctx) {
 		contentResolver = ctx.getContentResolver();
+		context = ctx;
 	}
 
-	public boolean getUserStatus() {
+	public boolean getUserStatus(String number) {
 		boolean b = false;
 		try {
-			b = new MyCalendar().execute().get();
+			b = new MyCalendar().execute(new String[]{number}).get();
 			System.out.println("b is: " + b);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -41,12 +47,12 @@ public class ImportWorkCalendar {
 		return b;
 	}
 
-	public class MyCalendar extends AsyncTask<Intent, String, Boolean> 
+	public class MyCalendar extends AsyncTask<String, String, Boolean> 
 	{
 		private final String[] COLS = new String[] {CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY};
 
 		@Override
-		protected Boolean doInBackground(Intent... arg0) {
+		protected Boolean doInBackground(String... number) {
 			System.out.println("**********in bckgrd");
 			Cursor cursor = null;
 			try
@@ -72,7 +78,6 @@ public class ImportWorkCalendar {
 					System.out.println("end:" + end);
 					System.out.println("allDay:" + allDay);
 					if((begin.getTime() <= now.getTime()) && (end.getTime() > now.getTime())){
-						
 						System.out.println("BUSY**********");
 						isBusy = true;
 						now = end;
@@ -83,10 +88,14 @@ public class ImportWorkCalendar {
 
 				if(isBusy){
 					///send to database
+					DBHelper helper = new DBHelper(context);
+					helper.createMissedCallRow(number[0],freeTime.getTime(),"0");
 					System.out.println("BUSY");
 					Calendar c1 = Calendar.getInstance();
 					c1.setTime(freeTime);
 					System.out.println(c1);
+					
+					
 				} else{
 					System.out.println("NOT BUSY");
 				}
@@ -107,5 +116,7 @@ public class ImportWorkCalendar {
 			System.out.println("**********in post");
 			super.onPostExecute(result);
 		}
+
+	
 	}
 }

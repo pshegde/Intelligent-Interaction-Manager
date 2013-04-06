@@ -58,6 +58,11 @@
             android:name="com.iim.services.MissedCallHandlerService"
             android:label="@string/missed_call_service_name" >
         </service>
+        
+         <service
+            android:name="com.iim.services.MyAlarmService"
+            android:label="@string/alarm_service_name" >
+        </service>
     </application>
 
 </manifest>

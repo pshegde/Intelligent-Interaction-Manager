@@ -10,5 +10,6 @@
     <string name="title_activity_notification_imp_caller">NotificationImpCaller</string>
     <string name="title_activity_notification_not_imp_caller">NotificationNotImpCaller</string>
     <string name="missed_call_service_name">MissedCallHandlerService</string>
+    <string name="alarm_service_name">AlarmService</string>
 
 </resources>

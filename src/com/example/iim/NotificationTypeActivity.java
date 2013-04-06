@@ -30,8 +30,6 @@ public class NotificationTypeActivity extends TabActivity {
 		notImpCallerSpec.setIndicator("",getResources().getDrawable(R.drawable.notimpcaller));
 		Intent notImpCallerIntent = new Intent(this, NotificationNotImpCaller.class);
 		notImpCallerSpec.setContent(notImpCallerIntent);
-
-
 //		// Tab for Videos
 //		TabSpec videospec = tabHost.newTabSpec("videos");
 //		videospec.setIndicator("Accounts", getResources().getDrawable(R.drawable.icon_videos_tab));
@@ -42,6 +40,7 @@ public class NotificationTypeActivity extends TabActivity {
 		tabHost.addTab(impCallerSpec); // Adding photos tab
 		tabHost.addTab(notImpCallerSpec); // Adding songs tab
 //		tabHost.addTab(videospec); // Adding videos tab
+		
 	}
 
 	@Override

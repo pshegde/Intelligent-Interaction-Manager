@@ -29,6 +29,13 @@ public class DBHelper {
 					+ "email_id text,"
 					+ "caller_type text not null"
 					+");";
+	
+	private static final String MISSED_CALL_CREATE =
+			"create table if not exist missed_call(_id integer primary key autoincrement, "
+					+ "call_no text not null,"
+					+ "free_time long,"
+					+ "is_notified character(1)"
+					+");";
 
 	private static final String DATABASE_NAME = "IIMDB";
 
@@ -45,6 +52,7 @@ public class DBHelper {
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, DATABASE_VERSION, null);
 			db.execSQL(IMP_CONTACT_CREATE);
 			db.execSQL(NOTIFICAITON_CREATE);
+			db.execSQL(MISSED_CALL_CREATE);
 			createNotificationRecords();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,6 +87,14 @@ public class DBHelper {
 		db.insert(DATABASE_TABLE_CONTACTS, null, initialValues);
 	}
 
+	public void createMissedCallRow(String name, long free_time, String is_notified) {
+		ContentValues initialValues = new ContentValues();
+		initialValues.put("call_no", name);
+		initialValues.put("free_time", free_time);
+		initialValues.put("is_notified", is_notified);
+		db.insert(MISSED_CALL_CREATE, null, initialValues);
+	}
+	
 	public void deleteRow(long rowId) {
 		db.delete(DATABASE_TABLE_CONTACTS, "_id=" + rowId, null);
 	}

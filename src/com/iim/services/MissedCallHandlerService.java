@@ -1,12 +1,15 @@
 package com.iim.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.example.iim.ImportWorkCalendar;
 import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -72,13 +75,15 @@ public class MissedCallHandlerService extends Service {
 				this.sendEmailNotification(name, incomingNumber);
 			} else {
 				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
-				boolean isBusy = importWorkCalendar.getUserStatus();
+				boolean isBusy = importWorkCalendar.getUserStatus(incomingNumber);
 				if(!isBusy){
 					// Fetch notification type for unImportant Caller	
 					this.sendEmailNotification(name, incomingNumber);
 				}
 				else{
 					System.out.println("He is busy");
+					//start an alarm to send a notification later
+					startAlarm();
 				}
 			}
 		} finally {
@@ -95,5 +100,16 @@ public class MissedCallHandlerService extends Service {
 
 	public void sendNotification(){
 		
+	}
+	
+	public void startAlarm(){
+		System.out.println("**Start an alarm..");
+		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
+		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.add(Calendar.SECOND, 10);
+		alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 	}
 }
