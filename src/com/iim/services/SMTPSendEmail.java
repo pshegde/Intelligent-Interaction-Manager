@@ -1,17 +1,13 @@
 package com.iim.services;
 
-import java.io.File;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -40,7 +36,7 @@ public class SMTPSendEmail extends Authenticator{
 	 * @throws AddressException
 	 * @throws MessagingException
 	 */
-	public void sendEmailTo(String user, String password, String hostname, String recipient,String incomingNumber,String incomingName)  throws AddressException, MessagingException{
+	public void sendEmailTo(String user, String password, String hostname, String recipient,Map<String, String> missedCalls)  throws AddressException, MessagingException{
 
 		mUserName=user;
 		mPassword=password;

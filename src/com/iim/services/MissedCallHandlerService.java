@@ -2,6 +2,8 @@ package com.iim.services;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -70,15 +72,19 @@ public class MissedCallHandlerService extends Service {
 					getApplicationContext());
 			ArrayList<String> importantContacts = callerGroupManager
 					.fetchImportantContacts();
+			
+			Map<String,String> missedCalls = new HashMap<String,String>();
+			missedCalls.put(name,incomingNumber);
+			
 			if (importantContacts.contains(name)) {
 				// Fetch notification type for Important Caller
-				this.sendEmailNotification(name, incomingNumber);
+				this.sendEmailNotification(missedCalls);
 			} else {
 				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
 				boolean isBusy = importWorkCalendar.getUserStatus(name, incomingNumber);
 				if(!isBusy){
 					// Fetch notification type for unImportant Caller	
-					this.sendEmailNotification(name, incomingNumber);
+					this.sendEmailNotification(missedCalls);
 				}
 				else{
 					System.out.println("He is busy");
@@ -93,8 +99,8 @@ public class MissedCallHandlerService extends Service {
 		}
 	}
 
-	public void sendEmailNotification(String incomingName, String incomingNumber) {
-        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", incomingNumber, incomingName);
+	public void sendEmailNotification(Map<String,String> missed) {
+        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", "psdeshp2@ncsu.edu", missed);
         sendEmailTask.execute();
 	}
 

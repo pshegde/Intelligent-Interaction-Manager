@@ -16,8 +16,6 @@ public class SendEmailTask extends AsyncTask<Void, Void, Void> {
 	String password;
 	String hostname;
 	String recipient;
-	String incomingNumber;
-	String incomingName;
 	
 	Map<String, String> missedCalls = new HashMap<String,String>();
 	
@@ -25,19 +23,23 @@ public class SendEmailTask extends AsyncTask<Void, Void, Void> {
 		i=intent;
 	}
 	
-	SendEmailTask(String user, String password, String hostname, String recipient,String incomingNumber,String incomingName){
+	SendEmailTask(String user, String password, String hostname, String recipient, Map<String, String> missed){
 		this.user = user;
 		this.password = password;
 		this.hostname = hostname;
 		this.recipient = recipient;
-		this.incomingNumber = incomingNumber;
-		this.incomingName = incomingName;
+		
+		for(String key: missed.keySet()) {
+			  if(!this.missedCalls.containsKey(key)) {
+				  this.missedCalls.put(key,missed.get(key));
+			  }
+		}
 	}
 	
 	protected Void doInBackground(Void... params) {
 		try {  
 			SMTPSendEmail sftpClient = new SMTPSendEmail();
-			sftpClient.sendEmailTo(user,password,hostname,recipient,incomingNumber,incomingName);
+			sftpClient.sendEmailTo(user,password,hostname,recipient,missedCalls);
         } catch (Exception e) {   
             Log.e("SendMail", e.getMessage(), e);   
         } 
