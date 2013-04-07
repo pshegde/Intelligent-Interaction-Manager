@@ -56,10 +56,7 @@ public class MyAlarmService extends Service {
 				missedCalls.put(currentRow.getCaller_name(),currentRow.getCaller_no());
 			}
 		}
-		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
-		String googleAccount = callerGroupManager.getGoogleAccount();
-		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missedCalls);
-		sendEmailTask.execute();
+	
 		String message = "You've got a missed call from ";
 		int count = missedCalls.keySet().size();
 		int countCheck = 0;
@@ -99,6 +96,12 @@ public class MyAlarmService extends Service {
 
         // Vibrate if vibrate is enabled
         notification.defaults |= Notification.DEFAULT_VIBRATE;
-        notificationManager.notify(0, notification);  
+        notificationManager.notify(0, notification);
+        
+        
+    	CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
+		String googleAccount = callerGroupManager.getGoogleAccount();
+		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missedCalls);
+		sendEmailTask.execute();
 	}
 }

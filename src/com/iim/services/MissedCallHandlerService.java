@@ -83,19 +83,26 @@ public class MissedCallHandlerService extends Service {
 			
 			if (importantContacts.contains(name)) {
 				// Fetch notification type for Important Caller
-				this.sendEmailNotification(missedCalls);
 				if(name==null){
 					this.sendNotification("You've got missed call from " + name);
 				}
 				else{
 					this.sendNotification("You've got missed call from " + name + " (" + incomingNumber + ")");
 				}
+				this.sendEmailNotification(missedCalls);
+				
 			} else {
 				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
 				boolean isBusy = importWorkCalendar.getUserStatus(name, incomingNumber);
 				if(!isBusy){
 					// Fetch notification type for unImportant Caller	
 					this.sendEmailNotification(missedCalls);
+					if(name==null){
+						this.sendNotification("You've got missed call from " + name);
+					}
+					else{
+						this.sendNotification("You've got missed call from " + name + " (" + incomingNumber + ")");
+					}
 				}
 				else{
 					System.out.println("He is busy");
@@ -113,7 +120,7 @@ public class MissedCallHandlerService extends Service {
 	public void sendEmailNotification(Map<String,String> missed) {
 		CallerGroupManager callerGroupManager = new CallerGroupManager(getApplicationContext());
 		String googleAccount = callerGroupManager.getGoogleAccount();
-        SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missed);
+        SendEmailTask sendEmailTask = new SendEmailTask("iimcsc750@gmail.com","oneclickadmin", "smtp.gmail.com", googleAccount, missed);
         sendEmailTask.execute();
 	}
 
