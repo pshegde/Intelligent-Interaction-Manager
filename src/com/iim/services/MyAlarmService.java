@@ -5,18 +5,27 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.iim.R;
 import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
 import com.iim.utils.MissedCallRow;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+
+
 
 public class MyAlarmService extends Service {
 
@@ -51,5 +60,45 @@ public class MyAlarmService extends Service {
 		String googleAccount = callerGroupManager.getGoogleAccount();
 		SendEmailTask sendEmailTask = new SendEmailTask("csc750iim@gmail.com","iimcsc750", "smtp.gmail.com", googleAccount, missedCalls);
 		sendEmailTask.execute();
+		String message = "You've got a missed call from ";
+		int count = missedCalls.keySet().size();
+		int countCheck = 0;
+		for(String incomingName:missedCalls.keySet()){
+			if(incomingName==null){
+				message = message + missedCalls.get(incomingName);
+			}
+			else{
+				message = message + incomingName;
+			}
+			countCheck++;
+			if(countCheck!=count){
+				message = message +",";
+			}
+		}
+		
+		int icon = R.drawable.ic_launcher;
+		long when = System.currentTimeMillis();
+		Context context = getApplicationContext();
+		NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new Notification(icon, message, when);
+
+        String title = context.getString(R.string.app_name);
+        
+        Intent notificationIntent = new Intent(context,MyAlarmService.class);
+        // set intent so it does not start a new activity
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent =
+                PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(context, title, message, intent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        // Play default notification sound
+        notification.defaults |= Notification.DEFAULT_SOUND;
+
+        // Vibrate if vibrate is enabled
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notificationManager.notify(0, notification);  
 	}
 }
