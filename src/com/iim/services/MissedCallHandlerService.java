@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -19,6 +21,8 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.example.iim.ImportWorkCalendar;
+import com.example.iim.R;
+import com.iim.receivers.MissedCallReceiver;
 import com.iim.utils.CallerGroupManager;
 import com.iim.utils.DBHelper;
 import com.iim.utils.MissedCallListener;
@@ -80,6 +84,12 @@ public class MissedCallHandlerService extends Service {
 			if (importantContacts.contains(name)) {
 				// Fetch notification type for Important Caller
 				this.sendEmailNotification(missedCalls);
+				if(name==null){
+					this.sendNotification("You've got missed call from " + name);
+				}
+				else{
+					this.sendNotification("You've got missed call from " + name + " (" + incomingNumber + ")");
+				}
 			} else {
 				ImportWorkCalendar importWorkCalendar = new ImportWorkCalendar(getApplicationContext());
 				boolean isBusy = importWorkCalendar.getUserStatus(name, incomingNumber);
@@ -107,8 +117,31 @@ public class MissedCallHandlerService extends Service {
         sendEmailTask.execute();
 	}
 
-	public void sendNotification(){
-		
+	public void sendNotification(String message){
+		int icon = R.drawable.ic_launcher;
+		long when = System.currentTimeMillis();
+		Context context = getApplicationContext();
+		NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new Notification(icon, message, when);
+
+        String title = context.getString(R.string.app_name);
+        
+        Intent notificationIntent = new Intent(context,MyAlarmService.class);
+        // set intent so it does not start a new activity
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent =
+                PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        notification.setLatestEventInfo(context, title, message, intent);
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        // Play default notification sound
+        notification.defaults |= Notification.DEFAULT_SOUND;
+
+        // Vibrate if vibrate is enabled
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notificationManager.notify(0, notification); 
 	}
 	
 	public void startAlarm(){
@@ -118,7 +151,8 @@ public class MissedCallHandlerService extends Service {
 		//set free time in calendar
 		
 		Intent myIntent = new Intent(MissedCallHandlerService.this, MyAlarmService.class);
-		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, 0);
+		PendingIntent pendingIntent = PendingIntent.getService(MissedCallHandlerService.this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		//PendingIntent pendingIntent = PendingIntent.getBroadcast(MissedCallHandlerService.this, 0, myIntent, 0);
 		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		
 		DBHelper dbHelper = DBHelper.getInstance(getApplicationContext());
@@ -127,6 +161,8 @@ public class MissedCallHandlerService extends Service {
 		for (MissedCallRow currentRow : missedCallRow) {
 			if (currentRow.getIs_notified().equals("0")) {
 				// update the row to set it to 1
+				System.out.println("In the loop in MissedCallHandler");
+				System.out.println(currentRow.getCallee_free_time());
 				dbHelper.updateMissedCallRow(currentRow.get_Id(), currentRow.getCaller_name(), currentRow.getCaller_no(), currentRow.getCallee_free_time(), "1");
 				 // free_time TODO - Confirm with prajakta
 				 alarmManager.set(AlarmManager.RTC_WAKEUP, currentRow.getCallee_free_time(), pendingIntent);
